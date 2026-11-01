@@ -27,3 +27,4 @@ test-*.bin
 src/.*.tmpdir/
 src/.*.tmp
 query
+android-app/app/src/main/assets/runtime/lwjgl/

@@ -217,13 +217,13 @@ export function DesktopShowcase() {
 
         <a
           className="showcase-apk"
-          href="/downloads/KCN-core-0.1.8.apk"
+          href="/downloads/KCN-core-0.1.9.apk"
           download
         >
           <span>
             <Download size={16} />
           </span>
-          <strong>下载 KCN Core 0.1.8</strong>
+          <strong>下载 KCN Core 0.1.9</strong>
           <small>自研下载版 · 27 MB</small>
           <ArrowRight size={14} />
         </a>

@@ -91,7 +91,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.8");
+            out.put("version", "0.1.9");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -322,13 +322,32 @@ public class KcnBridge {
                 File launcher = new File(activity.getApplicationInfo().nativeLibraryDir, "libkcnjava.so");
                 if (!new File(javaHome, ".kcn_java").isFile()) throw new IOException("请先安装 Java 21 运行时");
                 if (!launcher.isFile()) throw new IOException("缺少 JVM 启动器");
+                File lwjglHome = prepareLwjgl();
+                File lwjglNatives = new File(lwjglHome, "natives");
                 JSONObject plan = new LaunchPlanner(root, activity.getFilesDir()).prepare(instanceId);
                 JSONArray args = plan.optJSONArray("args");
                 if (args == null || args.length() < 2) throw new IOException("启动参数为空");
                 List<String> command = new ArrayList<>();
                 command.add(launcher.getAbsolutePath());
                 command.add("-Djava.home=" + javaHome.getAbsolutePath());
-                for (int i = 1; i < args.length(); i++) command.add(args.getString(i));
+                StringBuilder extraJars = new StringBuilder();
+                File[] jars = new File(lwjglHome, "jars").listFiles((dir, name) -> name.endsWith(".jar"));
+                if (jars != null) {
+                    for (File jar : jars) extraJars.append(File.pathSeparator).append(jar.getAbsolutePath());
+                }
+                for (int i = 1; i < args.length(); i++) {
+                    String arg = args.getString(i);
+                    if ("-cp".equals(arg) && i + 1 < args.length()) {
+                        command.add(arg);
+                        command.add(args.getString(i + 1) + extraJars);
+                        i++;
+                    } else if (arg.startsWith("-Djava.library.path=")) {
+                        command.add("-Djava.library.path=" + lwjglNatives.getAbsolutePath());
+                    } else {
+                        command.add(arg);
+                    }
+                }
+                command.add("-Dorg.lwjgl.librarypath=" + lwjglNatives.getAbsolutePath());
                 ProcessBuilder builder = new ProcessBuilder(command);
                 builder.directory(root);
                 builder.redirectErrorStream(true);
@@ -513,6 +532,59 @@ public class KcnBridge {
                 }
             }
             log("INFO", "JAVA", "解压 " + assetName + " · " + count + " 个文件");
+        }
+    }
+
+    private File prepareLwjgl() throws IOException {
+        File lwjglHome = new File(activity.getFilesDir(), "runtime/lwjgl");
+        File jars = new File(lwjglHome, "jars");
+        File natives = new File(lwjglHome, "natives");
+        File marker = new File(lwjglHome, ".kcn_lwjgl");
+        if (!marker.isFile()) {
+            log("INFO", "LWJGL", "解压 LWJGL jars 与 " + (isX86() ? "x86_64" : "arm64") + " natives");
+            deleteRecursive(lwjglHome);
+            ensureDir(jars);
+            ensureDir(natives);
+            copyAssetTree("runtime/lwjgl/3.3.3/common", jars);
+            copyAssetTree("runtime/lwjgl/3.3.3/" + (isX86() ? "x86_64" : "arm64"), natives);
+            markLibraries(natives);
+            writeText(marker, "3.3.3");
+            log("INFO", "LWJGL", "LWJGL 资源准备完成 · " + jars.getAbsolutePath());
+        }
+        return lwjglHome;
+    }
+
+    private void copyAssetTree(String assetPath, File destination) throws IOException {
+        String[] children = activity.getAssets().list(assetPath);
+        if (children == null) return;
+        if (children.length == 0) {
+            try (InputStream input = activity.getAssets().open(assetPath);
+                 FileOutputStream output = new FileOutputStream(new File(destination, new File(assetPath).getName()))) {
+                byte[] buffer = new byte[65536];
+                int read;
+                while ((read = input.read(buffer)) != -1) output.write(buffer, 0, read);
+            }
+            return;
+        }
+        ensureDir(destination);
+        for (String child : children) {
+            String childPath = assetPath + "/" + child;
+            String[] grandChildren = activity.getAssets().list(childPath);
+            if (grandChildren != null && grandChildren.length > 0) {
+                File dir = new File(destination, child);
+                ensureDir(dir);
+                copyAssetTree(childPath, dir);
+            } else {
+                ensureDir(destination);
+                File out = new File(destination, child);
+                try (InputStream input = activity.getAssets().open(childPath);
+                     FileOutputStream output = new FileOutputStream(out)) {
+                    byte[] buffer = new byte[65536];
+                    int read;
+                    while ((read = input.read(buffer)) != -1) output.write(buffer, 0, read);
+                }
+                out.setReadable(true, true);
+            }
         }
     }
 

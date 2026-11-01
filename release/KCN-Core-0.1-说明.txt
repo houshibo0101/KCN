@@ -1,9 +1,9 @@
-KCN Core 0.1.8（Android 开发版）
+KCN Core 0.1.9（Android 开发版）
 =================================
 
 安装
 ----
-1. 将 KCN-core-0.1.8.apk 传到 Android 手机。
+1. 将 KCN-core-0.1.9.apk 传到 Android 手机。
 2. 允许文件管理器安装未知应用。
 3. 安装并打开「KCN启动器」。
 4. 应用使用私有外部目录，不需要申请存储权限。
@@ -25,15 +25,15 @@ KCN Core 0.1.8（Android 开发版）
 - 启动计划生成：classpath、mainClass、Java 路径和 JVM 参数
 - JVM 冒烟测试（java -version）
 - 实验性游戏进程启动：调用打包 java + 启动计划
-- 双 ABI（arm64-v8a / x86_64）
+- 内置 LWJGL 3.3.3 jars 与 arm64 / x86_64 natives
 - Modrinth Mod / 光影搜索与下载
 - 内置 OpenJDK 21 解压
 - 原生下载进度、实时日志、错误日志
 
 这一版还没有完成
 ----------------
-- LWJGL / OpenGL 启动栈与 Android Surface
-- 缺少 LWJGL jar 时，游戏进程会启动后立即报错，日志会显示原因
+- Android GL Surface / 输入桥
+- 当前 java 子进程仍可能因 GLFW/EGL 初始化失败而退出
 - Forge / NeoForge 安装器
 - Microsoft 登录、触控与渲染配置
 
@@ -49,4 +49,4 @@ android-app/app/src/main/jniLibs/
 
 SHA-256
 -------
-8315F2371304ED0F73ED68BE52065059D553A2C7D4ECC008436B3239A2684A6B
+0FE2F58F1CA9687248848412907EC7C9F2A40470D1FE375B2168095AC443B681
