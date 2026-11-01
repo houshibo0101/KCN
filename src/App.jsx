@@ -459,12 +459,12 @@ export default function App() {
   }
 
   async function installApp() {
-    const href = '/downloads/KCN-core-0.1.2.apk'
-    addLog('INFO', 'launcher', '开始下载 KCN Core 0.1.2 Android APK')
-    notify('正在下载 KCN Core 0.1.2', 'info')
+    const href = '/downloads/KCN-core-0.1.3.apk'
+    addLog('INFO', 'launcher', '开始下载 KCN Core 0.1.3 Android APK')
+    notify('正在下载 KCN Core 0.1.3', 'info')
     const anchor = document.createElement('a')
     anchor.href = href
-    anchor.download = 'KCN-core-0.1.2.apk'
+    anchor.download = 'KCN-core-0.1.3.apk'
     document.body.appendChild(anchor)
     anchor.click()
     anchor.remove()

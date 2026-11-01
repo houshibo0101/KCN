@@ -314,6 +314,20 @@ h3 { font-size: 14px; font-weight: 650; letter-spacing: -.01em; }
 .quick b { font-size: 9.5px; font-weight: 600; }
 .quick small { color: var(--muted-2); font-size: 7px; }
 
+.instances-block { margin-top: 21px; }
+.instance-scroll { display: flex; gap: 7px; margin: 0 -18px; padding: 0 18px 2px; overflow-x: auto; scrollbar-width: none; }
+.instance-scroll::-webkit-scrollbar { display: none; }
+.instance-card { display: flex; flex: 0 0 158px; flex-direction: column; padding: 10px; border: 1px solid var(--line-soft); border-radius: 14px; text-align: left; background: rgba(255,255,255,.027); }
+.instance-card.is-active { border-color: rgba(184,242,106,.28); background: linear-gradient(140deg, rgba(184,242,106,.075), transparent 75%), rgba(255,255,255,.025); }
+.instance-top { display: flex; align-items: center; justify-content: space-between; gap: 5px; }
+.instance-badge { padding: 3px 5px; border-radius: 4px; color: #b6d694; background: var(--lime-soft); font-size: 6px; font-weight: 650; }
+.instance-badge.fabric { color: #cab8ff; background: rgba(184,160,255,.09); }
+.instance-active { color: var(--lime); font-size: 6.5px; }
+.instance-card b { overflow: hidden; margin-top: 9px; font-family: var(--display); font-size: 11.5px; text-overflow: ellipsis; white-space: nowrap; }
+.instance-card small { display: block; margin-top: 2px; overflow: hidden; color: #657162; font-size: 6.7px; text-overflow: ellipsis; white-space: nowrap; }
+.instance-actions { display: flex; align-items: center; gap: 5px; margin-top: 9px; }
+.instance-actions button { height: 23px; padding: 0 7px; border: 1px solid var(--line-soft); border-radius: 6px; color: #82907d; background: rgba(255,255,255,.025); font-size: 6.5px; }
+.instance-actions button.play { flex: 1; color: #bcdc9d; border-color: rgba(184,242,106,.14); background: var(--lime-soft); }
 .section-head {
   display: flex;
   align-items: flex-end;

@@ -1,9 +1,9 @@
-KCN Core 0.1.2（Android 开发版）
+KCN Core 0.1.3（Android 开发版）
 =================================
 
 安装
 ----
-1. 将 KCN-core-0.1.2.apk 传到 Android 手机。
+1. 将 KCN-core-0.1.3.apk 传到 Android 手机。
 2. 允许文件管理器安装未知应用。
 3. 安装并打开「KCN启动器」。
 4. 应用使用私有外部目录，不需要申请存储权限。
@@ -19,7 +19,8 @@ KCN Core 0.1.2（Android 开发版）
 - 独立的 KCN 包名 com.kcn.launcher，自己的界面和原生桥
 - Mojang / BMCLAPI 真实版本清单
 - 版本元数据、client.jar、运行库、资源索引和资源对象真实下载
-- Fabric Loader 元数据获取、库下载和版本配置
+- Fabric Loader 元数据、库下载和版本配置
+- 已安装实例列表与当前实例切换
 - Modrinth Mod / 光影搜索与下载
 - 内置 OpenJDK 21 解压到应用私有目录
 - 原生下载进度、实时日志、错误日志
@@ -41,4 +42,4 @@ android-app/app/src/main/assets/runtime/jre21/
 
 SHA-256
 -------
-6394B88079AC8FC07B248C2364FB9B6849EE9B2692A9F1785163E89368F96CEA
+6896DEA374778081178EC224CD0F8EA939DAA58DC3175D5F2787A0291478AA37

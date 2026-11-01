@@ -18,13 +18,14 @@ KCN 是一个独立开发的移动端启动器项目，包含两套界面与实�
 | Mojang / BMCLAPI 版本清单 | 已完成 |
 | 版本 JSON / client.jar / libraries / assets | 已完成 |
 | Fabric Loader 安装 | 已完成 |
+| 已安装实例与切换 | 已完成 |
 | Modrinth Mod / 光影下载 | 已完成 |
 | 内置 OpenJDK 21 解压 | 已完成 |
 | 下载队列 / 实时日志 | 已完成 |
 | **JVM / LWJGL 游戏启动层** | **未完成** |
 | Forge / NeoForge / 登录 / 触控 | 未开始 |
 
-`KCN Core 0.1.2` 是开发里程碑，不是最终可玩版本。
+`KCN Core 0.1.3` 是开发里程碑，不是最终可玩版本。
 
 ## 下载
 
@@ -32,14 +33,15 @@ KCN 是一个独立开发的移动端启动器项目，包含两套界面与实�
 
 - 包名：`com.kcn.launcher`
 - 要求：Android 8.0+；Java 运行时解压需要 arm64 设备
-- 当前版本：`0.1.2`
-- SHA-256：`6394B88079AC8FC07B248C2364FB9B6849EE9B2692A9F1785163E89368F96CEA`
+- 当前版本：`0.1.3`
+- SHA-256：`6896DEA374778081178EC224CD0F8EA939DAA58DC3175D5F2787A0291478AA37`
 
 ## 已实现能力
 
 - Mojang / BMCLAPI 双源版本清单，本地缓存与镜像回退
 - 版本元数据、`client.jar`、libraries、assets 索引与资源对象真实下载
 - Fabric Loader 元数据、依赖库和版本配置
+- 已安装实例列表与当前实例切换
 - Modrinth 搜索、游戏版本匹配和 Mod / 光影文件下载
 - 内置 OpenJDK 21 解压到应用私有目录
 - 原生下载任务进度、实时日志与错误日志

@@ -89,7 +89,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.2");
+            out.put("version", "0.1.3");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -245,6 +245,48 @@ public class KcnBridge {
             log("ERROR", "RESOURCE", title + " 下载失败：" + error.getMessage());
             callJs("onError", "资源下载失败：" + error.getMessage());
         }
+    }
+
+    @JavascriptInterface
+    public String getInstances() {
+        JSONArray out = new JSONArray();
+        try {
+            File versions = new File(root, "versions");
+            File[] dirs = versions.listFiles(File::isDirectory);
+            String active = activeInstance();
+            if (dirs != null) {
+                for (File dir : dirs) {
+                    File markerFile = new File(dir, ".installed.json");
+                    if (!markerFile.isFile()) continue;
+                    JSONObject marker = new JSONObject(readText(markerFile));
+                    JSONObject item = new JSONObject();
+                    String id = marker.optString("id", dir.getName());
+                    item.put("id", id);
+                    item.put("folder", dir.getName());
+                    item.put("loader", marker.optString("loader", "vanilla"));
+                    item.put("base", marker.optString("inheritsFrom", id));
+                    item.put("installedAt", marker.optLong("installedAt", 0));
+                    item.put("active", id.equals(active));
+                    out.put(item);
+                }
+            }
+        } catch (Exception error) {
+            log("WARN", "CORE", "读取实例失败：" + error.getMessage());
+        }
+        return out.toString();
+    }
+
+    @JavascriptInterface
+    public void setActiveInstance(String id) {
+        activity.getSharedPreferences("kcn", Activity.MODE_PRIVATE).edit()
+                .putString("active_instance", id == null ? "" : id).apply();
+        log("INFO", "CORE", "当前实例切换为 " + id);
+        callJs("onInstances", getInstances());
+    }
+
+    private String activeInstance() {
+        return activity.getSharedPreferences("kcn", Activity.MODE_PRIVATE)
+                .getString("active_instance", "");
     }
 
     @JavascriptInterface
@@ -501,6 +543,7 @@ public class KcnBridge {
             marker.put("id", versionId);
             marker.put("installedAt", System.currentTimeMillis());
             marker.put("type", versionJson.optString("type", "release"));
+            marker.put("loader", "fabric".equals(loader) ? "fabric" : "vanilla");
             writeText(new File(versionDir, ".installed.json"), marker.toString());
             if ("fabric".equals(loader)) {
                 installFabric(versionId, taskId, title);

@@ -21,6 +21,7 @@
     resourcesLoaded: false,
     java: null,
     loader: 'vanilla',
+    instances: [],
   }
 
   const $ = (id) => document.getElementById(id)
@@ -237,6 +238,56 @@
     }
   }
 
+  function renderInstances() {
+    const block = $('instances-block')
+    const host = $('instance-list')
+    block.hidden = state.instances.length === 0
+    $('instance-count').textContent = `${state.instances.length} 个`
+    host.innerHTML = ''
+    state.instances.forEach((instance) => {
+      const card = el('div', `instance-card${instance.active ? ' is-active' : ''}`)
+      const top = el('div', 'instance-top')
+      top.appendChild(el('span', `instance-badge ${instance.loader}`, instance.loader === 'fabric' ? 'FABRIC' : 'VANILLA'))
+      if (instance.active) top.appendChild(el('span', 'instance-active', '当前'))
+      card.appendChild(top)
+      card.appendChild(el('b', '', escapeHtml(instance.id)))
+      card.appendChild(el('small', '', `${escapeHtml(instance.base || instance.id)} · ${instance.loader === 'fabric' ? 'Fabric Loader' : '原版'}`))
+      const actions = el('div', 'instance-actions')
+      const activate = el('button', '', instance.active ? '已选' : '设为当前')
+      activate.type = 'button'
+      activate.addEventListener('click', () => {
+        if (instance.active) return
+        if (native) native.setActiveInstance(instance.id)
+        else {
+          state.instances = state.instances.map((item) => ({ ...item, active: item.id === instance.id }))
+          renderInstances()
+        }
+      })
+      const play = el('button', 'play', '启动')
+      play.type = 'button'
+      play.addEventListener('click', () => toast('启动层将在 0.2 接入，当前还不能进入游戏'))
+      actions.appendChild(activate)
+      actions.appendChild(play)
+      card.appendChild(actions)
+      host.appendChild(card)
+    })
+  }
+
+  function refreshInstances() {
+    if (!native) {
+      state.instances = Array.from(state.installed).map((id) => ({ id, base: id, loader: id.startsWith('fabric-loader-') ? 'fabric' : 'vanilla', active: id === state.instances[0]?.id }))
+      renderInstances()
+      return
+    }
+    const list = parse(native.getInstances(), [])
+    state.instances = Array.isArray(list) ? list : []
+    if (state.instances.length && !state.instances.some((item) => item.active)) {
+      state.instances[0].active = true
+      native.setActiveInstance(state.instances[0].id)
+    }
+    renderInstances()
+  }
+
   function renderJava() {
     const java = state.java
     if (!java) {
@@ -323,6 +374,12 @@
       updateStats()
       renderHomeVersions()
       renderAllVersions()
+      refreshInstances()
+    },
+    onInstances(json) {
+      const list = parse(json, [])
+      state.instances = Array.isArray(list) ? list : []
+      renderInstances()
     },
     onJavaStatus(json) {
       state.java = parse(json, null)
@@ -444,6 +501,7 @@
       if (Array.isArray(logs)) state.logs = logs
       state.java = parse(native.getJavaStatus(), null)
       renderJava()
+      refreshInstances()
       updateStats()
       renderLogs()
     } else {

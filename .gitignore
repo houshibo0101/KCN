@@ -20,8 +20,8 @@ public/downloads/
 *.jks
 *.keystore
 test-*.bin
-.gh-token
-.git-askpass.cmd
+.gh-token*
+.git-askpass*
 .DS_Store
 src/.*.tmpdir/
 src/.*.tmp
