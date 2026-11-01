@@ -89,7 +89,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.3");
+            out.put("version", "0.1.4");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -245,6 +245,28 @@ public class KcnBridge {
             log("ERROR", "RESOURCE", title + " 下载失败：" + error.getMessage());
             callJs("onError", "资源下载失败：" + error.getMessage());
         }
+    }
+
+    @JavascriptInterface
+    public void prepareLaunch(String instanceId) {
+        io.execute(() -> {
+            try {
+                JSONObject plan = new LaunchPlanner(root, activity.getFilesDir()).prepare(instanceId);
+                JSONArray warnings = plan.optJSONArray("warnings");
+                log("INFO", "LAUNCH", "启动计划已生成 · " + instanceId + " · "
+                        + plan.optInt("classpathCount") + " 个 classpath 条目");
+                if (warnings != null && warnings.length() > 0) {
+                    for (int i = 0; i < warnings.length(); i++) {
+                        log("WARN", "LAUNCH", warnings.optString(i));
+                    }
+                }
+                log("INFO", "LAUNCH", "JVM / LWJGL 启动层尚未接入，未创建游戏进程");
+                callJs("onLaunchPlan", plan.toString());
+            } catch (Exception error) {
+                log("ERROR", "LAUNCH", "启动计划生成失败：" + error.getMessage());
+                callJs("onError", "启动计划生成失败：" + error.getMessage());
+            }
+        });
     }
 
     @JavascriptInterface

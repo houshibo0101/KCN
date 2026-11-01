@@ -265,7 +265,10 @@
       })
       const play = el('button', 'play', '启动')
       play.type = 'button'
-      play.addEventListener('click', () => toast('启动层将在 0.2 接入，当前还不能进入游戏'))
+      play.addEventListener('click', () => {
+        if (native) native.prepareLaunch(instance.id)
+        else toast('启动计划仅支持 Android 原生环境')
+      })
       actions.appendChild(activate)
       actions.appendChild(play)
       card.appendChild(actions)
@@ -375,6 +378,11 @@
       renderHomeVersions()
       renderAllVersions()
       refreshInstances()
+    },
+    onLaunchPlan(json) {
+      const plan = parse(json, null)
+      if (!plan) return
+      toast(`启动计划已生成：${plan.mainClass} · ${plan.classpathCount} 项`)
     },
     onInstances(json) {
       const list = parse(json, [])

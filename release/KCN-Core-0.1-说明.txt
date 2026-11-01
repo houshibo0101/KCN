@@ -1,9 +1,9 @@
-KCN Core 0.1.3（Android 开发版）
+KCN Core 0.1.4（Android 开发版）
 =================================
 
 安装
 ----
-1. 将 KCN-core-0.1.3.apk 传到 Android 手机。
+1. 将 KCN-core-0.1.4.apk 传到 Android 手机。
 2. 允许文件管理器安装未知应用。
 3. 安装并打开「KCN启动器」。
 4. 应用使用私有外部目录，不需要申请存储权限。
@@ -21,13 +21,14 @@ KCN Core 0.1.3（Android 开发版）
 - 版本元数据、client.jar、运行库、资源索引和资源对象真实下载
 - Fabric Loader 元数据、库下载和版本配置
 - 已安装实例列表与当前实例切换
+- 启动计划生成：classpath、mainClass、Java 路径和 JVM 参数
 - Modrinth Mod / 光影搜索与下载
 - 内置 OpenJDK 21 解压到应用私有目录
 - 原生下载进度、实时日志、错误日志
 
 这一版还没有完成
 ----------------
-- JVM / LWJGL 启动层：目前不能真正进入游戏
+- JVM / LWJGL 启动层：启动计划已生成，但还没有创建 JavaVM 和游戏进程
 - Forge / NeoForge 安装器
 - Microsoft 登录、触控与渲染配置
 
@@ -42,4 +43,4 @@ android-app/app/src/main/assets/runtime/jre21/
 
 SHA-256
 -------
-6896DEA374778081178EC224CD0F8EA939DAA58DC3175D5F2787A0291478AA37
+6F9101A46F164AE28204F8F667EAA1B1017E1DE503DDBA57840EA44EAA13874E
