@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,6 +56,7 @@ public class KcnBridge {
     private final ExecutorService io = Executors.newFixedThreadPool(4);
     private final Handler main = new Handler(Looper.getMainLooper());
     private final List<String> logs = Collections.synchronizedList(new ArrayList<>());
+    private final Set<String> cancelledTasks = Collections.synchronizedSet(new java.util.HashSet<>());
     private final AtomicInteger taskSequence = new AtomicInteger(1);
     private final File root;
     private volatile boolean destroyed = false;
@@ -89,7 +91,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.6");
+            out.put("version", "0.1.7");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -245,6 +247,18 @@ public class KcnBridge {
             log("ERROR", "RESOURCE", title + " 下载失败：" + error.getMessage());
             callJs("onError", "资源下载失败：" + error.getMessage());
         }
+    }
+
+    @JavascriptInterface
+    public void cancelTask(String taskId) {
+        if (taskId == null || taskId.isEmpty()) return;
+        cancelledTasks.add(taskId);
+        log("WARN", "TASK", "用户取消任务 " + taskId);
+        callJs("onTaskCancelled", taskId);
+    }
+
+    private void checkCancelled(String taskId) throws IOException {
+        if (cancelledTasks.contains(taskId)) throw new IOException("用户已取消");
     }
 
     @JavascriptInterface
@@ -595,6 +609,7 @@ public class KcnBridge {
             if (libraries != null && libraries.length() > 0) {
                 int total = libraries.length();
                 for (int i = 0; i < total; i++) {
+                    checkCancelled(taskId);
                     JSONObject library = libraries.getJSONObject(i);
                     JSONObject artifact = library.optJSONObject("downloads") == null
                             ? null : library.getJSONObject("downloads").optJSONObject("artifact");
@@ -637,10 +652,15 @@ public class KcnBridge {
             log("INFO", "INSTALL", versionId + " 安装完成，用时 " + ((System.currentTimeMillis() - start) / 1000) + "s");
             callJs("onInstalled", new JSONArray().put(versionId).toString());
         } catch (Exception error) {
-            Log.e(TAG, "install failed", error);
-            emitTask(taskId, title, error.getMessage() == null ? "安装失败" : error.getMessage(), 0, "error", 0, "");
-            log("ERROR", "INSTALL", "安装 " + versionId + " 失败：" + error.getMessage());
-            callJs("onError", "安装失败：" + error.getMessage());
+            if (cancelledTasks.contains(taskId)) {
+                emitTask(taskId, title, "已取消", 0, "cancelled", 0, "");
+                log("WARN", "INSTALL", "已取消安装 " + versionId);
+            } else {
+                Log.e(TAG, "install failed", error);
+                emitTask(taskId, title, error.getMessage() == null ? "安装失败" : error.getMessage(), 0, "error", 0, "");
+                log("ERROR", "INSTALL", "安装 " + versionId + " 失败：" + error.getMessage());
+                callJs("onError", "安装失败：" + error.getMessage());
+            }
         }
     }
 
@@ -705,6 +725,7 @@ public class KcnBridge {
         int done = 0;
         long downloadedBytes = 0;
         while (keys.hasNext()) {
+            checkCancelled(taskId);
             String name = keys.next();
             JSONObject object = objects.optJSONObject(name);
             if (object == null) continue;
@@ -875,22 +896,31 @@ public class KcnBridge {
 
     private void downloadFile(String url, File target, String taskId, String title,
                               double startProgress, double endProgress) throws IOException {
+        checkCancelled(taskId);
         ensureDir(target.getParentFile());
         File temp = new File(target.getAbsolutePath() + ".part");
+        long existing = temp.isFile() ? temp.length() : 0;
         HttpURLConnection connection = open(url);
+        if (existing > 0) connection.setRequestProperty("Range", "bytes=" + existing + "-");
         long total = -1;
         try {
             int code = connection.getResponseCode();
+            if (existing > 0 && code == 200) {
+                existing = 0;
+                temp.delete();
+            }
             if (code < 200 || code >= 300) throw new IOException("HTTP " + code);
-            total = connection.getContentLengthLong();
+            boolean append = existing > 0 && code == 206;
+            total = append ? existing + connection.getContentLengthLong() : connection.getContentLengthLong();
             try (InputStream input = new BufferedInputStream(connection.getInputStream());
-                 BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(temp))) {
+                 BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(temp, append))) {
                 byte[] buffer = new byte[65536];
-                long downloaded = 0;
+                long downloaded = append ? existing : 0;
                 long started = System.currentTimeMillis();
                 long lastUpdate = 0;
                 int read;
                 while ((read = input.read(buffer)) != -1) {
+                    checkCancelled(taskId);
                     output.write(buffer, 0, read);
                     downloaded += read;
                     long now = System.currentTimeMillis();
@@ -909,7 +939,7 @@ public class KcnBridge {
                 temp.delete();
             }
         } catch (IOException error) {
-            temp.delete();
+            // Keep the .part file so the next attempt can resume with a Range request.
             throw error;
         } finally {
             connection.disconnect();

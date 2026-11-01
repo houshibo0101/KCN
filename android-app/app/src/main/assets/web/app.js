@@ -379,6 +379,13 @@
       renderAllVersions()
       refreshInstances()
     },
+    onTaskCancelled(taskId) {
+      if (state.activeTask && state.activeTask.id === taskId) {
+        state.activeTask = null
+        $('task-pill').hidden = true
+      }
+      toast('任务已取消')
+    },
     onJvmTest(json) {
       const result = parse(json, null)
       if (!result) return
@@ -502,6 +509,13 @@
           window.KCN.onJavaStatus(JSON.stringify({ installed: true, version: '21', path: '/data/user/0/com.kcn.launcher/files/runtime/jre21' }))
         }, 1100)
       }
+    })
+    $('task-cancel').addEventListener('click', () => {
+      if (native && state.activeTask) {
+        native.cancelTask(state.activeTask.id)
+        toast('正在取消任务')
+      }
+      $('task-pill').hidden = true
     })
     $('task-hide').addEventListener('click', () => { $('task-pill').hidden = true })
     $('clear-logs').addEventListener('click', () => {
