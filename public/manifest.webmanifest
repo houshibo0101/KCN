@@ -1,0 +1,28 @@
+{
+  "name": "KCN 启动器 · Minecraft Java 版",
+  "short_name": "KCN",
+  "description": "把 Minecraft Java 版装进口袋。版本安装、Mod、光影与 Java 运行时，一个应用搞定。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f0c",
+  "theme_color": "#0b0f0c",
+  "categories": ["games", "utilities"],
+  "icons": [
+    {
+      "src": "/kcn-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/kcn-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

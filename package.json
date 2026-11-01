@@ -1,0 +1,27 @@
+{
+  "name": "kcn-launcher",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "KCN 启动器 · 移动端 Minecraft Java 版启动器",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test:flow": "node scripts/flow-test.mjs",
+    "test:layout": "node scripts/audit.mjs",
+    "shots": "node scripts/capture.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/manrope": "^5.2.8",
+    "@fontsource-variable/space-grotesk": "^5.2.9",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
+    "playwright-core": "^1.64.1",
+    "vite": "^6.3.6"
+  }
+}

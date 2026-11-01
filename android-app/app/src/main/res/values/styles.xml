@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.KCN" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/kcn_background</item>
+        <item name="android:colorAccent">@color/kcn_lime</item>
+        <item name="android:statusBarColor">@color/kcn_background</item>
+        <item name="android:navigationBarColor">@color/kcn_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+</resources>

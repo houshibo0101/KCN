@@ -1,0 +1,37 @@
+plugins {
+    id("com.android.application")
+}
+
+android {
+    namespace = "com.kcn.launcher"
+    compileSdk = 34
+
+    defaultConfig {
+        applicationId = "com.kcn.launcher"
+        minSdk = 26
+        targetSdk = 34
+        versionCode = 3
+        versionName = "0.1.2"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    packaging {
+        resources.excludes += ["META-INF/DEPENDENCIES", "META-INF/LICENSE*", "META-INF/NOTICE*"]
+    }
+}
+
+dependencies {
+    implementation("org.apache.commons:commons-compress:1.27.1")
+    implementation("org.tukaani:xz:1.10")
+}

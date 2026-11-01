@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0b0f0c" />
+  <title>KCN 启动器</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="cube" width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+          <defs>
+            <linearGradient id="ct" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#edffc3"/><stop offset="1" stop-color="#b8f26a"/></linearGradient>
+            <linearGradient id="cl" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#79b83f"/><stop offset="1" stop-color="#4c7c2b"/></linearGradient>
+            <linearGradient id="cr" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a3df5b"/><stop offset="1" stop-color="#75b442"/></linearGradient>
+          </defs>
+          <path d="M24 4 43 14.5v19L24 44 5 33.5v-19Z" fill="#8ed14b"/>
+          <path d="M24 4 43 14.5 24 25 5 14.5Z" fill="url(#ct)"/>
+          <path d="M24 25v19L5 33.5v-19Z" fill="url(#cl)"/>
+          <path d="M24 25v19l19-10.5v-19Z" fill="url(#cr)"/>
+        </svg>
+        <div class="brand-copy"><strong>KCN</strong><span>LAUNCHER CORE</span></div>
+      </div>
+      <div class="top-meta">
+        <span class="dev-badge">0.1.2 DEV</span>
+        <span class="net-dot" id="net-dot"></span>
+      </div>
+    </header>
+
+    <main class="screen" id="screen">
+      <section class="page is-active" id="page-home">
+        <div class="welcome">
+          <div>
+            <p class="eyebrow" id="greeting">晚上好</p>
+            <h1>把方块世界<br /><span>装进口袋。</span></h1>
+          </div>
+          <div class="device-chip" id="device-chip">Android</div>
+        </div>
+
+        <section class="hero">
+          <div class="hero-art" aria-hidden="true">
+            <svg viewBox="0 0 420 220" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#426961"/><stop offset=".52" stop-color="#9bae88"/><stop offset="1" stop-color="#d9ab74"/></linearGradient>
+                <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1"><stop offset=".3" stop-color="#07100a" stop-opacity="0"/><stop offset="1" stop-color="#07100a" stop-opacity=".9"/></linearGradient>
+              </defs>
+              <rect width="420" height="220" fill="url(#sky)"/>
+              <circle cx="326" cy="62" r="25" fill="#ffedb3"/>
+              <g fill="#f5ebcf" opacity=".25"><rect x="42" y="48" width="70" height="4"/><rect x="58" y="40" width="40" height="4"/></g>
+              <path d="M0 166h46v-12h38v-9h27v-16h28v8h29v10h36v12h35v-8h31v-13h29v7h33v14h38v-9h50v28H0Z" fill="#4b6353" opacity=".8"/>
+              <path d="M0 181h40v-11h35v-7h31v10h26v-9h35v9h29v-5h36v12h30v-7h38v11h37v-12h43v9h50v40H0Z" fill="#2d4437"/>
+              <rect y="177" width="420" height="43" fill="#485a51" opacity=".6"/>
+              <g opacity=".35" fill="#f4ce98"><rect x="292" y="184" width="74" height="2"/><rect x="308" y="192" width="42" height="2"/></g>
+              <path d="M0 193h30v-8h27v6h28v9h21v8h33v-8h23v-11h21v9h30v11h26v-7h29v10h28v6h46v-8h50v22H0Z" fill="#182a20"/>
+              <path d="M0 198h32v-4h25v5h23v8H0Z" fill="#65854a" opacity=".6"/>
+              <g><rect x="230" y="177" width="11" height="17" fill="#27342a"/><rect x="225" y="170" width="16" height="18" fill="#d08a4c"/><rect x="228" y="188" width="13" height="10" fill="#385361"/><rect x="241" y="190" width="4" height="18" fill="#a7b0ad"/><rect x="237" y="185" width="12" height="5" fill="#c7d0c8"/></g>
+              <rect width="420" height="220" fill="url(#shade)"/>
+            </svg>
+          </div>
+          <div class="hero-top">
+            <span class="status-pill"><i class="live-dot"></i> KCN CORE · 真实下载</span>
+            <button class="hero-refresh" id="refresh-versions" aria-label="刷新版本清单">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.3"/><path d="M21 3v6h-6"/></svg>
+            </button>
+          </div>
+          <div class="hero-copy">
+            <p class="hero-eyebrow">MINECRAFT · JAVA EDITION</p>
+            <h2>Minecraft <span id="latest-version">1.21.8</span></h2>
+            <div class="hero-stats">
+              <span><b id="version-count">—</b> 个版本</span>
+              <span><b id="installed-count">0</b> 已安装</span>
+              <span><b id="storage-free">—</b> 可用</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="notice" id="core-notice">
+          <span class="notice-icon">!</span>
+          <div>
+            <strong>第一阶段：真实下载核心</strong>
+            <p>版本清单、客户端、运行库、完整资源对象与日志均已接入真实网络。游戏启动层将在下一阶段接入。</p>
+          </div>
+        </div>
+
+        <section class="quick-row">
+          <button class="quick" data-tab="versions">
+            <span class="q-icon violet">▦</span>
+            <b>版本库</b><small>真实安装</small>
+          </button>
+          <button class="quick" data-placeholder="Mod 下载">
+            <span class="q-icon amber">◇</span>
+            <b>Mod</b><small>下一阶段</small>
+          </button>
+          <button class="quick" data-placeholder="光影下载">
+            <span class="q-icon cyan">✦</span>
+            <b>光影</b><small>下一阶段</small>
+          </button>
+          <button class="quick" data-tab="java">
+            <span class="q-icon coral">☕</span>
+            <b>Java</b><small>内置运行时</small>
+          </button>
+        </section>
+
+        <section class="section-head">
+          <div><p class="eyebrow">GAME LIBRARY</p><h3>游戏版本</h3></div>
+          <button class="text-btn" id="refresh-mini">刷新</button>
+        </section>
+
+        <div class="loader-row">
+          <span>加载器</span>
+          <button class="loader-btn is-active" data-loader="vanilla">原版</button>
+          <button class="loader-btn" data-loader="fabric">Fabric</button>
+          <small id="loader-hint">纯净体验</small>
+        </div>
+
+        <div class="search-row">
+          <label class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="version-search" placeholder="搜索版本号" autocomplete="off" />
+          </label>
+          <button class="filter-btn is-active" data-filter="release">正式版</button>
+          <button class="filter-btn" data-filter="snapshot">快照</button>
+        </div>
+
+        <div class="version-list" id="version-list">
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+          <div class="skeleton-row"></div>
+        </div>
+        <p class="list-note" id="list-note">正在连接 Mojang 版本清单…</p>
+      </section>
+
+      <section class="page" id="page-versions">
+        <div class="page-head"><p class="eyebrow">GAME LIBRARY</p><h1>版本库</h1><p>查看所有正式版与快照，选择版本下载完整文件。</p></div>
+        <div class="loader-row">
+          <span>加载器</span>
+          <button class="loader-btn is-active" data-loader="vanilla">原版</button>
+          <button class="loader-btn" data-loader="fabric">Fabric</button>
+          <small id="loader-hint-all">纯净体验</small>
+        </div>
+        <div class="search-row wide">
+          <label class="search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="versions-search" placeholder="搜索版本号" autocomplete="off" />
+          </label>
+        </div>
+        <div class="filter-row" id="versions-filters">
+          <button class="filter-btn is-active" data-vfilter="all">全部</button>
+          <button class="filter-btn" data-vfilter="release">正式版</button>
+          <button class="filter-btn" data-vfilter="snapshot">快照</button>
+          <button class="filter-btn" data-vfilter="installed">已安装</button>
+        </div>
+        <div class="version-list" id="all-version-list"></div>
+        <p class="list-note" id="all-list-note">加载中…</p>
+      </section>
+
+      <section class="page" id="page-resources">
+        <div class="page-head"><p class="eyebrow">EXPLORE · MODRINTH</p><h1>资源工坊</h1><p>真实搜索 Modrinth，按当前游戏版本匹配并下载到实例目录。</p></div>
+        <div class="resource-tabs" id="resource-tabs">
+          <button class="is-active" data-rtype="mod">Mod</button>
+          <button data-rtype="shader">光影</button>
+        </div>
+        <label class="search resource-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="resource-search" placeholder="搜索 Mod 或光影" autocomplete="off" />
+          <button class="search-go" id="resource-go">搜索</button>
+        </label>
+        <div class="resource-grid" id="resource-grid"></div>
+        <p class="list-note" id="resource-note">连接 Modrinth…</p>
+      </section>
+
+      <section class="page" id="page-java">
+        <div class="page-head"><p class="eyebrow">RUNTIME</p><h1>Java 运行时</h1><p>解压内置 OpenJDK，为启动层准备运行环境。</p></div>
+        <div class="java-hero" id="java-hero">
+          <span class="java-logo">☕</span>
+          <div class="java-copy">
+            <span class="java-status" id="java-status">检查中…</span>
+            <h3>OpenJDK 21</h3>
+            <p id="java-path">正在读取运行时…</p>
+          </div>
+          <span class="java-state" id="java-state">—</span>
+        </div>
+        <button class="primary-btn" id="install-java">安装内置 Java 21</button>
+        <div class="java-facts">
+          <div><span>架构</span><b>arm64-v8a</b></div>
+          <div><span>来源</span><b>OpenJDK</b></div>
+          <div><span>启动层</span><b class="muted">下一阶段</b></div>
+        </div>
+        <p class="list-note">运行时来自 Apache 2.0 / GPLv2 兼容的 OpenJDK 构建，解压到应用私有目录。</p>
+      </section>
+
+      <section class="page" id="page-logs">
+        <div class="page-head row-head">
+          <div><p class="eyebrow">RUNTIME &amp; DIAGNOSTICS</p><h1>运行日志</h1></div>
+          <span class="live-pill"><i class="live-dot"></i> LIVE</span>
+        </div>
+        <div class="log-stats">
+          <div><span>记录</span><b id="log-count">0</b></div>
+          <div><span>警告</span><b class="warn" id="log-warn">0</b></div>
+          <div><span>错误</span><b class="error" id="log-error">0</b></div>
+        </div>
+        <div class="log-toolbar">
+          <div class="log-filters">
+            <button class="is-active" data-logfilter="all">全部</button>
+            <button data-logfilter="INFO">信息</button>
+            <button data-logfilter="WARN">警告</button>
+            <button data-logfilter="ERROR">错误</button>
+          </div>
+          <button class="clear-btn" id="clear-logs">清空</button>
+        </div>
+        <div class="terminal" id="terminal">
+          <div class="terminal-head"><span class="tdots"><i></i><i></i><i></i></span><span>kcn-core.log</span><em>v0.1</em></div>
+          <div class="terminal-body" id="terminal-body"><div class="empty-log">等待日志…</div></div>
+        </div>
+        <p class="list-note">日志来自 KCN 原生下载核心，最多保留 300 条。</p>
+      </section>
+    </main>
+
+    <div class="task-pill" id="task-pill" hidden>
+      <span class="task-spinner"></span>
+      <div class="task-copy">
+        <div class="task-line"><b id="task-title">安装</b><em id="task-percent">0%</em></div>
+        <div class="task-bar"><span id="task-bar-fill"></span></div>
+        <small id="task-sub">准备中</small>
+      </div>
+      <button class="task-close" id="task-hide">×</button>
+    </div>
+
+    <nav class="bottom-nav">
+      <button class="nav is-active" data-tab="home"><span>⌂</span><b>首页</b></button>
+      <button class="nav" data-tab="versions"><span>▦</span><b>版本</b></button>
+      <button class="nav" data-tab="resources"><span>◇</span><b>资源</b></button>
+      <button class="nav" data-tab="java"><span>☕</span><b>Java</b></button>
+      <button class="nav" data-tab="logs"><span>≡</span><b>日志</b></button>
+    </nav>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+KCN Core 0.1.2（Android 开发版）
+=================================
+
+安装
+----
+1. 将 KCN-core-0.1.2.apk 传到 Android 手机。
+2. 允许文件管理器安装未知应用。
+3. 安装并打开「KCN启动器」。
+4. 应用使用私有外部目录，不需要申请存储权限。
+
+要求
+----
+- Android 8.0（API 26）或更高
+- arm64 设备（内置 OpenJDK 解压仅支持 arm64-v8a）
+- 网络连接（版本清单、Modrinth、文件下载）
+
+这一版已经实现
+--------------
+- 独立的 KCN 包名 com.kcn.launcher，自己的界面和原生桥
+- Mojang / BMCLAPI 真实版本清单
+- 版本元数据、client.jar、运行库、资源索引和资源对象真实下载
+- Fabric Loader 元数据获取、库下载和版本配置
+- Modrinth Mod / 光影搜索与下载
+- 内置 OpenJDK 21 解压到应用私有目录
+- 原生下载进度、实时日志、错误日志
+
+这一版还没有完成
+----------------
+- JVM / LWJGL 启动层：目前不能真正进入游戏
+- Forge / NeoForge 安装器
+- Microsoft 登录、触控与渲染配置
+
+这是一个开发里程碑，不是最终可玩版。下载文件位于：
+  /sdcard/Android/data/com.kcn.launcher/files/minecraft/
+
+构建源码
+--------
+android-app/app/src/main/java/com/kcn/launcher/
+android-app/app/src/main/assets/web/
+android-app/app/src/main/assets/runtime/jre21/
+
+SHA-256
+-------
+6394B88079AC8FC07B248C2364FB9B6849EE9B2692A9F1785163E89368F96CEA
