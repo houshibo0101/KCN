@@ -89,7 +89,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.4");
+            out.put("version", "0.1.5");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -245,6 +245,57 @@ public class KcnBridge {
             log("ERROR", "RESOURCE", title + " 下载失败：" + error.getMessage());
             callJs("onError", "资源下载失败：" + error.getMessage());
         }
+    }
+
+    @JavascriptInterface
+    public void testJvm() {
+        io.execute(() -> {
+            File javaHome = new File(activity.getFilesDir(), "runtime/jre21");
+            File marker = new File(javaHome, ".kcn_java");
+            File launcher = new File(activity.getApplicationInfo().nativeLibraryDir, "libkcnjava.so");
+            try {
+                if (!marker.isFile()) throw new IOException("请先在 Java 页面解压运行时");
+                if (!launcher.isFile()) throw new IOException("APK 中缺少 JVM 启动器");
+                log("INFO", "JVM", "开始 JVM 冒烟测试 · " + launcher.getAbsolutePath());
+                ProcessBuilder builder = new ProcessBuilder(launcher.getAbsolutePath(), "-version");
+                builder.redirectErrorStream(true);
+                builder.environment().put("JAVA_HOME", javaHome.getAbsolutePath());
+                builder.environment().put("LD_LIBRARY_PATH",
+                        new File(javaHome, "lib").getAbsolutePath() + ":" +
+                                new File(javaHome, "lib/server").getAbsolutePath());
+                Process process = builder.start();
+                StringBuilder output = new StringBuilder();
+                try (InputStream input = process.getInputStream()) {
+                    byte[] buffer = new byte[4096];
+                    int read;
+                    while ((read = input.read(buffer)) != -1) {
+                        output.append(new String(buffer, 0, read, StandardCharsets.UTF_8));
+                    }
+                }
+                boolean finished = process.waitFor(20, java.util.concurrent.TimeUnit.SECONDS);
+                if (!finished) {
+                    process.destroyForcibly();
+                    throw new IOException("JVM 启动超时");
+                }
+                int code = process.exitValue();
+                for (String line : output.toString().split("\\r?\\n")) {
+                    if (!line.trim().isEmpty()) log("INFO", "JVM", line.trim());
+                }
+                if (code != 0) throw new IOException("JVM 退出码 " + code);
+                log("INFO", "JVM", "JVM 冒烟测试通过 · 可以进入 LWJGL 启动层");
+                callJs("onJvmTest", new JSONObject().put("ok", true)
+                        .put("output", output.toString()).toString());
+            } catch (Exception error) {
+                log("ERROR", "JVM", "JVM 测试失败：" + error.getMessage());
+                JSONObject result = new JSONObject();
+                try {
+                    result.put("ok", false);
+                    result.put("error", error.getMessage());
+                } catch (Exception ignored) {
+                }
+                callJs("onJvmTest", result.toString());
+            }
+        });
     }
 
     @JavascriptInterface

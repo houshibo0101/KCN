@@ -379,6 +379,12 @@
       renderAllVersions()
       refreshInstances()
     },
+    onJvmTest(json) {
+      const result = parse(json, null)
+      if (!result) return
+      if (result.ok) toast('JVM 启动器测试通过，查看日志')
+      else toast(`JVM 测试失败：${result.error || '未知错误'}`)
+    },
     onLaunchPlan(json) {
       const plan = parse(json, null)
       if (!plan) return
@@ -480,6 +486,14 @@
     })
     $('resource-go').addEventListener('click', searchResources)
     $('resource-search').addEventListener('keydown', (event) => { if (event.key === 'Enter') searchResources() })
+    $('test-jvm').addEventListener('click', () => {
+      if (native) {
+        toast('正在测试 JVM 启动器，查看日志')
+        native.testJvm()
+      } else {
+        toast('JVM 测试仅支持 Android 原生环境')
+      }
+    })
     $('install-java').addEventListener('click', () => {
       if (native) native.installJava('21')
       else {
