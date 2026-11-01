@@ -266,8 +266,12 @@
       const play = el('button', 'play', '启动')
       play.type = 'button'
       play.addEventListener('click', () => {
-        if (native) native.prepareLaunch(instance.id)
-        else toast('启动计划仅支持 Android 原生环境')
+        if (native) {
+          toast('正在创建游戏进程')
+          native.startGame(instance.id)
+        } else {
+          toast('游戏启动仅支持 Android 原生环境')
+        }
       })
       actions.appendChild(activate)
       actions.appendChild(play)
@@ -385,6 +389,14 @@
         $('task-pill').hidden = true
       }
       toast('任务已取消')
+    },
+    onGameStarted(json) {
+      const info = parse(json, null)
+      toast(`游戏进程已启动${info?.instance ? ` · ${info.instance}` : ''}`)
+    },
+    onGameExit(json) {
+      const info = parse(json, null)
+      toast(`游戏进程结束 · 退出码 ${info?.code ?? '未知'}，请查看日志`)
     },
     onJvmTest(json) {
       const result = parse(json, null)

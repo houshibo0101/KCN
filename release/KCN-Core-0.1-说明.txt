@@ -1,9 +1,9 @@
-KCN Core 0.1.7（Android 开发版）
+KCN Core 0.1.8（Android 开发版）
 =================================
 
 安装
 ----
-1. 将 KCN-core-0.1.7.apk 传到 Android 手机。
+1. 将 KCN-core-0.1.8.apk 传到 Android 手机。
 2. 允许文件管理器安装未知应用。
 3. 安装并打开「KCN启动器」。
 4. 应用使用私有外部目录，不需要申请存储权限。
@@ -11,7 +11,7 @@ KCN Core 0.1.7（Android 开发版）
 要求
 ----
 - Android 8.0（API 26）或更高
-- 支持 arm64-v8a / x86_64（不同 ABI 使用各自 JRE 资源）
+- 支持 arm64-v8a / x86_64
 - 网络连接（版本清单、Modrinth、文件下载）
 
 这一版已经实现
@@ -19,19 +19,21 @@ KCN Core 0.1.7（Android 开发版）
 - 独立的 KCN 包名 com.kcn.launcher，自己的界面和原生桥
 - Mojang / BMCLAPI 真实版本清单
 - 版本元数据、client.jar、运行库、资源索引和资源对象真实下载
-- 下载任务取消
-- .part 断点续传（Range 请求）
+- 下载任务取消与 .part 断点续传
 - Fabric Loader 元数据、库下载和版本配置
-- 已安装实例列表、当前实例切换
+- 已安装实例列表与当前实例切换
 - 启动计划生成：classpath、mainClass、Java 路径和 JVM 参数
-- JVM 冒烟测试：执行打包的 java -version（实验）
-- arm64 / x86_64 双 ABI 运行时资源
+- JVM 冒烟测试（java -version）
+- 实验性游戏进程启动：调用打包 java + 启动计划
+- 双 ABI（arm64-v8a / x86_64）
 - Modrinth Mod / 光影搜索与下载
+- 内置 OpenJDK 21 解压
 - 原生下载进度、实时日志、错误日志
 
 这一版还没有完成
 ----------------
-- JVM / LWJGL 启动层：可以测试 JVM，但还没有创建 Minecraft 游戏进程
+- LWJGL / OpenGL 启动栈与 Android Surface
+- 缺少 LWJGL jar 时，游戏进程会启动后立即报错，日志会显示原因
 - Forge / NeoForge 安装器
 - Microsoft 登录、触控与渲染配置
 
@@ -42,10 +44,9 @@ KCN Core 0.1.7（Android 开发版）
 --------
 android-app/app/src/main/java/com/kcn/launcher/
 android-app/app/src/main/assets/web/
-android-app/app/src/main/assets/runtime/jre21/
-android-app/app/src/main/assets/runtime/jre21-x86_64/
+android-app/app/src/main/assets/runtime/
 android-app/app/src/main/jniLibs/
 
 SHA-256
 -------
-DA09ABB9016CE6E47101DF83E53BC70F1465153735609ED9DAF4AC4B78DD782F
+8315F2371304ED0F73ED68BE52065059D553A2C7D4ECC008436B3239A2684A6B

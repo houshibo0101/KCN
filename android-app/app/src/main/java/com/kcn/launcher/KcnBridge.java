@@ -91,7 +91,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.7");
+            out.put("version", "0.1.8");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -309,6 +309,52 @@ public class KcnBridge {
                 } catch (Exception ignored) {
                 }
                 callJs("onJvmTest", result.toString());
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void startGame(String instanceId) {
+        io.execute(() -> {
+            Process process = null;
+            try {
+                File javaHome = new File(activity.getFilesDir(), "runtime/jre21");
+                File launcher = new File(activity.getApplicationInfo().nativeLibraryDir, "libkcnjava.so");
+                if (!new File(javaHome, ".kcn_java").isFile()) throw new IOException("请先安装 Java 21 运行时");
+                if (!launcher.isFile()) throw new IOException("缺少 JVM 启动器");
+                JSONObject plan = new LaunchPlanner(root, activity.getFilesDir()).prepare(instanceId);
+                JSONArray args = plan.optJSONArray("args");
+                if (args == null || args.length() < 2) throw new IOException("启动参数为空");
+                List<String> command = new ArrayList<>();
+                command.add(launcher.getAbsolutePath());
+                command.add("-Djava.home=" + javaHome.getAbsolutePath());
+                for (int i = 1; i < args.length(); i++) command.add(args.getString(i));
+                ProcessBuilder builder = new ProcessBuilder(command);
+                builder.directory(root);
+                builder.redirectErrorStream(true);
+                builder.environment().put("JAVA_HOME", javaHome.getAbsolutePath());
+                builder.environment().put("LD_LIBRARY_PATH",
+                        new File(javaHome, "lib").getAbsolutePath() + ":" +
+                                new File(javaHome, "lib/server").getAbsolutePath());
+                log("INFO", "LAUNCH", "创建游戏进程 · " + instanceId);
+                process = builder.start();
+                final Process running = process;
+                log("INFO", "LAUNCH", "游戏进程已创建，PID 不可直接读取；开始收集输出");
+                callJs("onGameStarted", new JSONObject().put("instance", instanceId).toString());
+                try (java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(running.getInputStream(), StandardCharsets.UTF_8))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        log("INFO", "GAME", line);
+                    }
+                }
+                int code = running.waitFor();
+                log(code == 0 ? "INFO" : "ERROR", "LAUNCH", "游戏进程结束，退出码 " + code);
+                callJs("onGameExit", new JSONObject().put("code", code).toString());
+            } catch (Exception error) {
+                if (process != null) process.destroy();
+                log("ERROR", "LAUNCH", "游戏进程启动失败：" + error.getMessage());
+                callJs("onError", "游戏进程启动失败：" + error.getMessage());
             }
         });
     }
