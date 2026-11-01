@@ -26,3 +26,4 @@ test-*.bin
 .DS_Store
 src/.*.tmpdir/
 src/.*.tmp
+query
