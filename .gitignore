@@ -5,6 +5,7 @@ tmp/
 wiki-tmp/
 android-build/
 android-sdk/
+android-emulator-home/
 
 android-app/.gradle/
 android-app/build/

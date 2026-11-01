@@ -89,7 +89,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.5");
+            out.put("version", "0.1.6");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -257,7 +257,8 @@ public class KcnBridge {
                 if (!marker.isFile()) throw new IOException("请先在 Java 页面解压运行时");
                 if (!launcher.isFile()) throw new IOException("APK 中缺少 JVM 启动器");
                 log("INFO", "JVM", "开始 JVM 冒烟测试 · " + launcher.getAbsolutePath());
-                ProcessBuilder builder = new ProcessBuilder(launcher.getAbsolutePath(), "-version");
+                ProcessBuilder builder = new ProcessBuilder(launcher.getAbsolutePath(),
+                        "-Djava.home=" + javaHome.getAbsolutePath(), "-version");
                 builder.redirectErrorStream(true);
                 builder.environment().put("JAVA_HOME", javaHome.getAbsolutePath());
                 builder.environment().put("LD_LIBRARY_PATH",
@@ -372,6 +373,7 @@ public class KcnBridge {
             out.put("version", "21");
             out.put("path", runtime.getAbsolutePath());
             out.put("bundled", true);
+            out.put("abi", isX86() ? "x86_64" : "arm64");
             out.put("note", "内置 OpenJDK 21 · 启动层将在下一阶段接入");
             if (marker.isFile()) out.put("size", directorySize(runtime));
         } catch (Exception ignored) {
@@ -395,8 +397,11 @@ public class KcnBridge {
                 emitTask(taskId, title, "准备解压运行时", 2, "running", 0, "");
                 deleteRecursive(runtime);
                 ensureDir(runtime);
-                extractAsset("runtime/jre" + version + "/universal.tar.xz", runtime, taskId, title, 4, 48);
-                extractAsset("runtime/jre" + version + "/bin-arm64.tar.xz", runtime, taskId, title, 48, 96);
+                boolean x86 = isX86();
+                String assetBase = "runtime/jre" + version + (x86 ? "-x86_64" : "");
+                String binName = x86 ? "bin-x86_64.tar.xz" : "bin-arm64.tar.xz";
+                extractAsset(assetBase + "/universal.tar.xz", runtime, taskId, title, 4, 48);
+                extractAsset(assetBase + "/" + binName, runtime, taskId, title, 48, 96);
                 markExecutable(new File(runtime, "bin"));
                 markLibraries(new File(runtime, "lib"));
                 writeText(new File(runtime, ".kcn_java"), new JSONObject()
@@ -449,6 +454,13 @@ public class KcnBridge {
             }
             log("INFO", "JAVA", "解压 " + assetName + " · " + count + " 个文件");
         }
+    }
+
+    private static boolean isX86() {
+        for (String abi : Build.SUPPORTED_ABIS) {
+            if (abi.contains("x86")) return true;
+        }
+        return false;
     }
 
     private static void markExecutable(File dir) {
