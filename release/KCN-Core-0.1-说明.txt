@@ -1,9 +1,9 @@
-KCN Core 0.1.9（Android 开发版）
-=================================
+KCN Core 0.1.10（Android 开发版）
+==================================
 
 安装
 ----
-1. 将 KCN-core-0.1.9.apk 传到 Android 手机。
+1. 将 KCN-core-0.1.10.apk 传到 Android 手机。
 2. 允许文件管理器安装未知应用。
 3. 安装并打开「KCN启动器」。
 4. 应用使用私有外部目录，不需要申请存储权限。
@@ -14,39 +14,39 @@ KCN Core 0.1.9（Android 开发版）
 - 支持 arm64-v8a / x86_64
 - 网络连接（版本清单、Modrinth、文件下载）
 
-这一版已经实现
---------------
-- 独立的 KCN 包名 com.kcn.launcher，自己的界面和原生桥
-- Mojang / BMCLAPI 真实版本清单
-- 版本元数据、client.jar、运行库、资源索引和资源对象真实下载
-- 下载任务取消与 .part 断点续传
-- Fabric Loader 元数据、库下载和版本配置
-- 已安装实例列表与当前实例切换
-- 启动计划生成：classpath、mainClass、Java 路径和 JVM 参数
-- JVM 冒烟测试（java -version）
-- 实验性游戏进程启动：调用打包 java + 启动计划
-- 内置 LWJGL 3.3.3 jars 与 arm64 / x86_64 natives
-- Modrinth Mod / 光影搜索与下载
-- 内置 OpenJDK 21 解压
-- 原生下载进度、实时日志、错误日志
+这一版重点
+----------
+修复 JVM 冒烟测试中的：
+  JVM Permission denied
+  Error: trying to exec .../runtime/jre21/bin/java
 
-这一版还没有完成
-----------------
-- Android GL Surface / 输入桥
-- 当前 java 子进程仍可能因 GLFW/EGL 初始化失败而退出
-- Forge / NeoForge 安装器
-- Microsoft 登录、触控与渲染配置
+修复方式：
+- 保留 JRE 解压目录
+- 将 runtime/jre21/bin/java 符号链接到 APK native 目录中的可执行启动器
+- 这样 java 启动器再次 exec 时目标位于可执行的 nativeLibraryDir
+- 如果符号链接失败，退回 android.system.Os.symlink
 
-这是一个开发里程碑，不是最终可玩版。下载文件位于：
-  /sdcard/Android/data/com.kcn.launcher/files/minecraft/
+已实现
+------
+- 独立包名 com.kcn.launcher
+- Mojang / BMCLAPI 版本清单
+- 版本 JSON / client.jar / libraries / assets 下载
+- Fabric Loader 安装
+- 实例列表、当前实例切换
+- 启动计划、JVM 冒烟测试
+- 内置 OpenJDK 21（arm64 / x86_64）
+- 内置 LWJGL 3.3.3 jars / natives
+- Modrinth Mod / 光影下载
+- 下载取消、断点续传、日志
 
-构建源码
+仍未完成
 --------
-android-app/app/src/main/java/com/kcn/launcher/
-android-app/app/src/main/assets/web/
-android-app/app/src/main/assets/runtime/
-android-app/app/src/main/jniLibs/
+- Android GL Surface / EGL / GLFW 输入桥
+- 游戏进程可能仍然在 GLFW/EGL 初始化阶段退出
+- Forge / NeoForge、Microsoft 登录、触控
+
+这是开发版，不是最终可玩版。
 
 SHA-256
 -------
-0FE2F58F1CA9687248848412907EC7C9F2A40470D1FE375B2168095AC443B681
+43AC53D15465B805F50898E144487010BDA1DF41C85A6FD377FBE8A0361DEA05

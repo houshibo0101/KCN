@@ -91,7 +91,7 @@ public class KcnBridge {
             out.put("sdk", Build.VERSION.SDK_INT);
             out.put("abi", Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "unknown");
             out.put("package", activity.getPackageName());
-            out.put("version", "0.1.9");
+            out.put("version", "0.1.10");
             out.put("root", root.getAbsolutePath());
         } catch (Exception error) {
             Log.e(TAG, "device info", error);
@@ -270,6 +270,7 @@ public class KcnBridge {
             try {
                 if (!marker.isFile()) throw new IOException("请先在 Java 页面解压运行时");
                 if (!launcher.isFile()) throw new IOException("APK 中缺少 JVM 启动器");
+                fixJavaExecutable(javaHome, launcher);
                 log("INFO", "JVM", "开始 JVM 冒烟测试 · " + launcher.getAbsolutePath());
                 ProcessBuilder builder = new ProcessBuilder(launcher.getAbsolutePath(),
                         "-Djava.home=" + javaHome.getAbsolutePath(), "-version");
@@ -322,6 +323,7 @@ public class KcnBridge {
                 File launcher = new File(activity.getApplicationInfo().nativeLibraryDir, "libkcnjava.so");
                 if (!new File(javaHome, ".kcn_java").isFile()) throw new IOException("请先安装 Java 21 运行时");
                 if (!launcher.isFile()) throw new IOException("缺少 JVM 启动器");
+                fixJavaExecutable(javaHome, launcher);
                 File lwjglHome = prepareLwjgl();
                 File lwjglNatives = new File(lwjglHome, "natives");
                 JSONObject plan = new LaunchPlanner(root, activity.getFilesDir()).prepare(instanceId);
@@ -532,6 +534,26 @@ public class KcnBridge {
                 }
             }
             log("INFO", "JAVA", "解压 " + assetName + " · " + count + " 个文件");
+        }
+    }
+
+    private void fixJavaExecutable(File javaHome, File launcher) {
+        File binJava = new File(javaHome, "bin/java");
+        try {
+            java.nio.file.Files.deleteIfExists(binJava.toPath());
+            java.nio.file.Files.createSymbolicLink(binJava.toPath(), launcher.toPath());
+            log("INFO", "JVM", "已把 JAVA_HOME/bin/java 链接到可执行的 native 启动器");
+        } catch (Exception error) {
+            log("WARN", "JVM", "符号链接失败，尝试 Os.symlink：" + error.getMessage());
+            try {
+                Class<?> os = Class.forName("android.system.Os");
+                java.lang.reflect.Method symlink = os.getMethod("symlink", String.class, String.class);
+                binJava.delete();
+                symlink.invoke(null, launcher.getAbsolutePath(), binJava.getAbsolutePath());
+                log("INFO", "JVM", "已通过 Os.symlink 链接 java 启动器");
+            } catch (Exception fallback) {
+                log("ERROR", "JVM", "无法创建可执行的 java 链接：" + fallback.getMessage());
+            }
         }
     }
 

@@ -25,7 +25,7 @@ KCN 是一个独立开发的移动端启动器项目，包含两套界面与实�
 | **JVM / LWJGL 游戏启动层** | **未完成** |
 | Forge / NeoForge / 登录 / 触控 | 未开始 |
 
-`KCN Core 0.1.9` 是开发里程碑，不是最终可玩版本。
+`KCN Core 0.1.10` 是开发里程碑，不是最终可玩版本。
 
 ## 下载
 
@@ -33,8 +33,8 @@ KCN 是一个独立开发的移动端启动器项目，包含两套界面与实�
 
 - 包名：`com.kcn.launcher`
 - 要求：Android 8.0+；Java 运行时解压需要 arm64 设备
-- 当前版本：`0.1.9`
-- SHA-256：`0FE2F58F1CA9687248848412907EC7C9F2A40470D1FE375B2168095AC443B681`
+- 当前版本：`0.1.10`
+- SHA-256：`43AC53D15465B805F50898E144487010BDA1DF41C85A6FD377FBE8A0361DEA05`
 
 ## 已实现能力
 
@@ -43,7 +43,7 @@ KCN 是一个独立开发的移动端启动器项目，包含两套界面与实�
 - Fabric Loader 元数据、依赖库和版本配置
 - 已安装实例列表与当前实例切换
 - 启动计划生成：classpath、mainClass、Java 路径和 JVM 参数
-- JVM 冒烟测试：打包 JRE 的 `java` 启动器，尝试执行 `java -version`
+- JVM 冒烟测试：把 JRE 的 `bin/java` 链接到 native 可执行启动器后再执行
 - 下载任务取消与 `.part` 断点续传
 - 实验性游戏进程启动：调用打包的 java 与启动计划
 - 内置 LWJGL 3.3.3 jars 与 Android natives（发布 APK 包含二进制资源）
